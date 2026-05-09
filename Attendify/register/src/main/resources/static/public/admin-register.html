@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendify · Admin Registration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../css/register.css">
+</head>
+
+<body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <div class="register-card">
+        <div class="register-header">
+            <div class="brand-icon">🏫</div>
+            <div>
+                <h2>Admin registration</h2>
+                <p>Register your organization and get a school code</p>
+            </div>
+        </div>
+
+        <form id="adminRegisterForm">
+            <div class="form-grid">
+                <!-- Org Name -->
+                <div class="input-group full-width">
+                    <label>Organization Name</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🏛️</span>
+                        <input type="text" id="schoolName" placeholder="e.g. St. Xavier's High School" required>
+                    </div>
+                </div>
+
+                <!-- Admin Email -->
+                <div class="input-group full-width">
+                    <label>Admin Email</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">✉️</span>
+                        <input type="email" id="email" placeholder="admin@organization.com" required>
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div class="input-group full-width">
+                    <label>Password</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🔑</span>
+                        <input type="password" id="password" placeholder="·············" required>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="register-btn">
+                <span>→</span> Register Organization
+            </button>
+
+            <div id="message" class="message"></div>
+
+            <div class="login-prompt">
+                Already have an account?
+                <span onclick="window.location.href='login.html'">sign in</span>
+            </div>
+        </form>
+    </div>
+    <script src="../js/admin-regi.js"></script>
+    <style>
+        #message:not(:empty) {
+            display: flex;
+        }
+    </style>
+</body>
+
+</html>

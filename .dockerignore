@@ -1,0 +1,17 @@
+**/target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/resources/static/
+!**/src/main/resources/templates/
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git files
+.git/
+.gitignore

@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendify - Smart Attendance</title>
+    <!-- Font & Icons (subtle) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: "Inter", system-ui, -apple-system, sans-serif;
+            background: #f4f2f7;
+            background: radial-gradient(circle at 10% 30%, #f0eaf8 0%, #e6e9fc 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        /* large organic blurred shapes */
+        .blob {
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(145deg, rgba(165, 180, 252, 0.4) 0%, rgba(196, 181, 253, 0.25) 100%);
+            border-radius: 70% 30% 50% 50% / 40% 60% 40% 60%;
+            filter: blur(70px);
+            z-index: 0;
+        }
+        .blob-1 { top: -150px; right: -100px; background: #c084fc55; }
+        .blob-2 { bottom: -150px; left: -80px; background: #7aa2f755; width: 500px; height: 500px; }
+        .blob-3 { top: 40%; left: 20%; width: 300px; height: 300px; background: #f9a8d455; filter: blur(90px); }
+
+        /* main card */
+        .login-card {
+            position: relative;
+            z-index: 20;
+            width: 100%;
+            max-width: 1000px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border-radius: 2.5rem;
+            box-shadow: 0 30px 60px -20px rgba(50, 40, 80, 0.3),
+                        0 0 0 1px rgba(255, 255, 255, 0.5) inset,
+                        0 0 0 1px rgba(255, 255, 255, 0.7);
+            display: flex;
+            flex-direction: row;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        /* LEFT PANEL — gradient / brand */
+        .brand-panel {
+            flex: 1 1 45%;
+            background: linear-gradient(155deg, #1e1b4b 0%, #2d2a6e 40%, #4c47b3 100%);
+            padding: 3rem 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            color: white;
+            position: relative;
+            isolation: isolate;
+        }
+
+        .brand-panel::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 80% 20%, rgba(255,255,255,0.15) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .brand-content {
+            position: relative;
+            z-index: 5;
+        }
+
+        .brand-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 0.6rem 1.4rem;
+            border-radius: 40px;
+            width: fit-content;
+            margin-bottom: 2.2rem;
+            border: 1px solid rgba(255,255,255,0.3);
+            font-weight: 500;
+            font-size: 0.95rem;
+            letter-spacing: 0.3px;
+        }
+
+        .brand-badge span {
+            background: white;
+            color: #2d2a6e;
+            border-radius: 20px;
+            padding: 0.2rem 1rem;
+            font-weight: 700;
+            font-size: 0.8rem;
+            margin-left: 0.4rem;
+        }
+
+        .brand-panel h1 {
+            font-size: 3.2rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            letter-spacing: -1px;
+        }
+
+        .brand-panel h1 span {
+            display: block;
+            font-weight: 300;
+            font-size: 2rem;
+            opacity: 0.9;
+        }
+
+        .brand-features {
+            margin-top: 2.8rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1rem;
+            font-weight: 400;
+            opacity: 0.9;
+        }
+
+        .feature-item .icon {
+            background: rgba(255, 255, 255, 0.2);
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        /* RIGHT PANEL — form */
+        .form-panel {
+            flex: 1 1 55%;
+            padding: 3.5rem 3rem;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(12px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-header {
+            margin-bottom: 2.2rem;
+        }
+
+        .form-header h2 {
+            font-size: 2.1rem;
+            font-weight: 600;
+            color: #0f0b2a;
+            letter-spacing: -0.02em;
+        }
+
+        .form-header p {
+            color: #45416b;
+            font-size: 1rem;
+            font-weight: 400;
+            margin-top: 0.3rem;
+        }
+
+        /* modern input group */
+        .input-group {
+            margin-bottom: 1.8rem;
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            
+            letter-spacing: 0.4px;
+            color: #353258;
+            margin-bottom: 0.4rem;
+            margin-left: 0.3rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper .input-icon {
+            position: absolute;
+            left: 18px;
+            color: #716c9e;
+            font-size: 1.2rem;
+            pointer-events: none;
+            transition: color 0.2s;
+        }
+
+        .input-wrapper select,
+        .input-wrapper input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 1.5px solid #e1deee;
+            border-radius: 18px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(4px);
+            color: #1e193f;
+            font-weight: 500;
+            outline: none;
+            transition: all 0.25s;
+            appearance: none;
+        }
+
+        .input-wrapper select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%235d578c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1.2rem center;
+            background-size: 1.2rem;
+        }
+
+        .input-wrapper input:focus,
+        .input-wrapper select:focus {
+            border-color: #655fc0;
+            background: white;
+            box-shadow: 0 8px 20px -12px #4b47a0, 0 0 0 3px rgba(101, 95, 192, 0.15);
+        }
+
+        .input-wrapper input:focus + .input-icon,
+        .input-wrapper select:focus ~ .input-icon {
+            color: #4b47a0;
+        }
+
+        /* password hint extras */
+        .forgot-row {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 0.3rem;
+        }
+
+        .forgot-link {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #4f4a8a;
+            text-decoration: none;
+            border-bottom: 1px dashed #b5b0da;
+        }
+
+        .forgot-link:hover {
+            color: #24204b;
+            border-bottom-style: solid;
+        }
+
+        /* button */
+        .login-btn {
+            width: 100%;
+            background: linear-gradient(115deg, #322e72, #5f59c0);
+            color: white;
+            border: none;
+            padding: 1.1rem;
+            border-radius: 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin: 1.5rem 0 2rem;
+            box-shadow: 0 15px 25px -10px #3f3a8a;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .login-btn:hover {
+            background: linear-gradient(115deg, #25215f, #4b45b0);
+            transform: scale(1.01) translateY(-2px);
+            box-shadow: 0 22px 30px -12px #2c2868;
+        }
+
+        .login-btn:active {
+            transform: scale(0.99);
+            box-shadow: 0 6px 12px -6px #1c194b;
+        }
+
+        .error-msg {
+            background: rgba(252, 165, 165, 0.25);
+            backdrop-filter: blur(6px);
+            padding: 0.9rem 1.4rem;
+            border-radius: 60px;
+            font-size: 0.9rem;
+            color: #aa1f2e;
+            border: 1px solid rgba(248, 113, 113, 0.3);
+            margin: 1rem 0 0.5rem;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .error-msg.show {
+            display: flex;
+        }
+
+        .register-link {
+            text-align: center;
+            font-size: 0.95rem;
+            color: #2e2b4a;
+            font-weight: 400;
+            border-top: 1px solid #d9d4ed;
+            padding-top: 2rem;
+            margin-top: 0.5rem;
+        }
+
+        .register-link span {
+            color: #423d87;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.6);
+            margin-left: 0.5rem;
+            transition: 0.2s;
+            display: inline-block;
+            border: 1px solid #bcb5ec;
+        }
+
+        .register-link span:hover {
+            background: white;
+            border-color: #655fc0;
+        }
+
+        /* small responsive */
+        @media (max-width: 780px) {
+            .login-card {
+                flex-direction: column;
+                border-radius: 2rem;
+            }
+            .brand-panel {
+                padding: 2.5rem;
+                border-radius: 2rem 2rem 0 0;
+            }
+            .form-panel {
+                padding: 2.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .brand-panel h1 { font-size: 2.5rem; }
+            .form-panel { padding: 2rem 1.5rem; }
+        }
+
+        /* additional micro-interaction */
+        .input-wrapper select {
+            cursor: pointer;
+        }
+
+        /* Admin badge */
+        .admin-badge {
+            background: rgba(212, 175, 55, 0.2);
+            color: #926d1f;
+            padding: 0.2rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+    </style>
+     -->
+
+    <link rel="stylesheet" href="../css/login.css">
+</head>
+
+<body>
+    <!-- floating background blobs -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <div class="login-card">
+        <!-- LEFT BRAND PANEL (professional & friendly) -->
+        <div class="brand-panel">
+            <div class="brand-content">
+                <div class="brand-badge">
+                    <i class="fa-solid fa-bolt"></i> Realtime · Secure
+                    <span>v2.0</span>
+                </div>
+                <h1>
+                    Attendify
+                    <span>Smart Attendance</span>
+                </h1>
+                <div class="brand-features">
+                    <div class="feature-item">
+                        <span class="icon"><i class="fa-solid fa-location-dot"></i></span> QR check‑in · one tap
+                    </div>
+                    <div class="feature-item">
+                        <span class="icon"><i class="fa-solid fa-chart-column"></i></span> Live analytics & insights
+                    </div>
+                    <div class="feature-item">
+                        <span class="icon"><i class="fa-solid fa-shield-halved"></i></span> End‑to‑end encrypted
+                    </div>
+                </div>
+                <!-- tiny testimonial / extra -->
+                <div
+                    style="margin-top: 3rem; font-size: 0.9rem; opacity: 0.75; border-left: 2px solid rgba(255,255,255,0.35); padding-left: 1.2rem;">
+                    “Seamless for teachers & students” <br>— 600+ Institutions
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT FORM PANEL (UI/UX polished) -->
+        <div class="form-panel">
+            <div class="form-header">
+                <h2>Welcome to Attendify</h2>
+                <p>Choose role & sign in to your account</p>
+            </div>
+
+            <form id="loginForm">
+                <!-- ROLE selector with modern icon -->
+                <div class="input-group">
+                    <label>I am a</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon"><i class="fa-regular fa-user"></i></span>
+                        <select id="role" required>
+                            <option value="student">Student</option>
+                            <option value="teacher">Teacher / Faculty</option>
+                            <option value="admin" selected>Administrator</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- EMAIL -->
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon"><i class="fa-regular fa-envelope"></i></span>
+                        <input type="email" id="email" placeholder="name@institution.edu" required>
+                    </div>
+                </div>
+
+                <!-- PASSWORD -->
+                <div class="input-group">
+                    <label>Password</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon"><i class="fa-solid fa-key"></i></span>
+                        <input type="password" id="password" placeholder="··········" required>
+                    </div>
+                    <div class="forgot-row">
+                        <a href="#" class="forgot-link">forgot password?</a>
+                    </div>
+                </div>
+
+                <button type="submit" class="login-btn">
+                    <span><i class="fa-solid fa-arrow-right"></i></span> Log in to dashboard
+                </button>
+
+                <div id="message" class="error-msg"></div>
+
+                <div class="register-link">
+                    New to Attendify?
+                    <span id="registerBtn" role="button" tabindex="0">Create account</span>
+                </div>
+
+            </form>
+
+            <!-- subtle footer (no action) -->
+            <div
+                style="display: flex; justify-content: center; gap: 2rem; margin-top: 2rem; font-size: 0.75rem; color: #8d88b0;">
+                <span><i class="fa-solid fa-lock"></i> SSL secured</span>
+                <span><i class="fa-regular fa-clipboard"></i> GDPR ready</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div class="modal-backdrop" id="forgotPasswordModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeForgotModal"><i class="fa-solid fa-xmark"></i></button>
+            <div class="modal-header">
+                <h3>Reset Password</h3>
+                <p style="font-size: 0.9rem; color: #666; margin-top: 5px;">Verify your identity to reset password</p>
+            </div>
+
+            <form id="forgotPasswordForm">
+                <div class="input-group">
+                    <label>Role</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon"><i class="fa-regular fa-user"></i></span>
+                        <select id="forgotRole" required>
+                            <option value="student">Student</option>
+                            <option value="teacher">Teacher / Faculty</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon"><i class="fa-regular fa-envelope"></i></span>
+                        <input type="email" id="forgotEmail" placeholder="Your registered email" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Mobile Number</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon"><i class="fa-solid fa-mobile-screen"></i></span>
+                        <input type="tel" id="forgotMobile" placeholder="Your registered mobile" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>New Password</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon"><i class="fa-solid fa-lock"></i></span>
+                        <input type="password" id="forgotNewPassword" placeholder="Minimum 6 characters" minlength="6"
+                            required>
+                    </div>
+                </div>
+
+                <button type="submit" class="login-btn" style="margin-bottom: 0;">
+                    Reset Password
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/login.js"></script>
+
+</body>
+
+</html>

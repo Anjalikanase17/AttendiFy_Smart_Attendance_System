@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Mark Attendance</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+    }
+
+    .attendance-card {
+      background: white;
+      padding: 30px;
+      width: 320px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #4facfe;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #4facfe;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #00c6ff;
+    }
+
+    #msg {
+      margin-top: 15px;
+      font-size: 14px;
+      font-weight: bold;
+      color: green;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="attendance-card">
+    <h2>Mark Attendance</h2>
+
+    <form id="attendanceForm">
+      <input type="text" id="rollNo" placeholder="Enter Roll No" required />
+      <button type="submit">Submit</button>
+    </form>
+
+    <p id="msg"></p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"></script>
+  <script src="/js/student-attendance.js"></script>
+
+</body>
+
+</html>

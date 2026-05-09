@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendify · Admin Panel | Track Teachers & Students</title>
+    <!-- Google Font & Icons -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="../css/admin-dashboard.css">
+</head>
+
+<body>
+    <div class="sidebar-overlay" id="adminSidebarOverlay"></div>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="adminSidebar">
+            <div class="sidebar-header">
+                <div class="logo"><i class="fas fa-qrcode"></i> <span>Attendify <span>Admin</span></span></div>
+            </div>
+            <div class="admin-info">
+                <div class="admin-avatar">AD</div>
+                <div class="admin-details">
+                    <h4 id="adminName">Admin Director</h4>
+                    <p id="adminEmail">admin@rcshahu.edu</p>
+                    <div class="org-code-box">
+                        <small>Org Code:</small>
+                        <span id="orgCodeDisplay">------</span>
+                    </div>
+                </div>
+            </div>
+            <div class="nav-menu">
+                <div class="nav-item">
+                    <div class="nav-link active" onclick="showSection('dashboard')">
+                        <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
+                    </div>
+                </div>
+                <div class="nav-link" onclick="showSection('teachers')">
+                    <i class="fas fa-chalkboard-teacher"></i> <span>Teachers</span>
+                </div>
+                <div class="nav-link" onclick="showSection('students')">
+                    <i class="fas fa-user-graduate"></i> <span>Students</span>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-link" onclick="showSection('masterdata')"><i class="fas fa-database"></i>
+                        <span>Master Data</span>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-link" onclick="showSection('timetable')"><i class="fas fa-calendar-alt"></i>
+                        <span>Timetable</span>
+                    </div>
+                </div>
+                <div class="nav-divider"></div>
+                <div class="nav-item">
+                    <div class="nav-link" onclick="showSection('reports')"><i class="fas fa-chart-bar"></i>
+                        <span>Reports</span>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-link" onclick="showSection('notices')"><i class="fas fa-bullhorn"></i>
+                        <span>Notices</span>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-link" onclick="showSection('settings')"><i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-link" onclick="logout()"><i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="top-bar">
+                <div class="top-bar-left">
+                    <button class="mobile-menu-btn" id="adminMenuToggle" type="button" aria-label="Open menu">
+                        ☰
+                    </button>
+                    <div class="page-title">
+                        <h2 id="pageTitle">Dashboard Overview</h2>
+                        <p id="pageSubtitle">Track teachers & students in real-time</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Section -->
+            <div id="dashboard-section">
+                <!-- Analytics Filtering -->
+                <div class="section-filter-bar">
+                    <div class="filter-group">
+                        <label>Class</label>
+                        <select id="analyticsClassFilter" onchange="onAnalyticsClassChange()">
+                            <option value="">All Classes</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Division</label>
+                        <select id="analyticsDivFilter" onchange="refreshAnalyticsCharts()">
+                            <option value="">All Divisions</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Subject</label>
+                        <select id="analyticsSubjectFilter" onchange="refreshAnalyticsCharts()">
+                            <option value="">All Subjects</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>&nbsp;</label>
+                        <button class="btn-primary" onclick="refreshAnalyticsCharts()">
+                            <i class="fas fa-filter"></i> Apply Filters
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Total Teachers</h3>
+                            <div class="stat-number" id="totalTeachers">0</div>
+                        </div>
+                        <div class="stat-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Total Students</h3>
+                            <div class="stat-number" id="totalStudents">0</div>
+                        </div>
+                        <div class="stat-icon"><i class="fas fa-users"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Active Classes</h3>
+                            <div class="stat-number" id="totalClasses">0</div>
+                        </div>
+                        <div class="stat-icon"><i class="fas fa-school"></i></div>
+                    </div>
+                    <!-- <div class="stat-card"><div class="stat-info"><h3>Today's Attendance</h3><div class="stat-number" id="todayAttendance">0%</div></div><div class="stat-icon"><i class="fas fa-calendar-check"></i></div></div> -->
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Today's Attendance</h3>
+                            <div class="stat-number" id="todaysAttendancePercent">0%</div>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="charts-row charts-grid-2x2">
+                    <!-- Chart 1: Class-wise Attendance Bar -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-school" style="color:#6366f1"></i> Class-wise Attendance %</h3>
+                            <span class="chart-subtitle">Which class is performing best?</span>
+                        </div>
+                        <div class="chart-container"><canvas id="classAttendanceChart"></canvas></div>
+                    </div>
+                    <!-- Chart 2: 7-Day Attendance Trend Line -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-chart-line" style="color:#10b981"></i> Daily Attendance Trend</h3>
+                            <span class="chart-subtitle">Last 7 recorded days</span>
+                        </div>
+                        <div class="chart-container"><canvas id="trendChart"></canvas></div>
+                    </div>
+                    <!-- Chart 3: Subject Engagement Bar -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-book-open" style="color:#f59e0b"></i> Subject Engagement</h3>
+                            <span class="chart-subtitle">Total vs Present per subject</span>
+                        </div>
+                        <div class="chart-container"><canvas id="subjectChart"></canvas></div>
+                    </div>
+                    <!-- Chart 4: Low Attendance Alert List -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-exclamation-triangle" style="color:#ef4444"></i> Low Attendance Alerts
+                            </h3>
+                            <span class="chart-subtitle">Students below 75%</span>
+                        </div>
+                        <div class="chart-container" style="overflow-y:auto">
+                            <div id="lowAttendanceList" style="padding:4px 0"></div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <!-- ===== STUDENTS SECTION ===== -->
+            <div id="students-section" style="display:none">
+                <div class="section-filter-bar">
+                    <div class="filter-group">
+                        <label>Department</label>
+                        <select id="studentDeptFilter" onchange="onStudentDeptChange()">
+                            <option value="">All Departments</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Class</label>
+                        <select id="studentClassFilter" onchange="onStudentClassChange()">
+                            <option value="">All Classes</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Division</label>
+                        <select id="studentDivFilter" onchange="applyStudentFilters()">
+                            <option value="">All Divisions</option>
+                        </select>
+                    </div>
+                    <div class="filter-group" style="flex:1">
+                        <label>Search</label>
+                        <input type="text" id="studentSearchInput" placeholder="Name / Roll No / Email..."
+                            oninput="applyStudentFilters()">
+                    </div>
+                    <div class="filter-group">
+                        <label>&nbsp;</label>
+                        <button class="add-btn" onclick="openModal('student')">
+                            <i class="fas fa-plus"></i> Add Student
+                        </button>
+                    </div>
+                </div>
+                <div class="data-table active">
+                    <div class="table-header">
+                        <h3>Students <span id="studentCount"
+                                style="font-size:14px;color:#64748b;font-weight:400"></span></h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Roll No</th>
+                                    <th>Name</th>
+                                    <th>Class</th>
+                                    <th>Division</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="table-header" style="justify-content:flex-end; gap:10px; padding-top:10px;">
+                        <button id="studentPrevBtn" class="tt-action-btn" onclick="changeStudentPage(-1)">Prev</button>
+                        <span id="studentPageInfo" style="font-size:13px;color:#64748b;">Page 0 of 0</span>
+                        <button id="studentNextBtn" class="tt-action-btn" onclick="changeStudentPage(1)">Next</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== TEACHERS SECTION ===== -->
+            <div id="teachers-section" style="display:none">
+                <div class="section-filter-bar">
+                    <div class="filter-group">
+                        <label>Department</label>
+                        <select id="teacherDeptFilter" onchange="applyTeacherFilters()">
+                            <option value="">All Departments</option>
+                        </select>
+                    </div>
+                    <div class="filter-group" style="flex:1">
+                        <label>Search</label>
+                        <input type="text" id="teacherSearchInput" placeholder="Name / Email / Phone..."
+                            oninput="applyTeacherFilters()">
+                    </div>
+                    <div class="filter-group">
+                        <label>&nbsp;</label>
+                        <button class="add-btn" onclick="openModal('teacher')">
+                            <i class="fas fa-plus"></i> Add Teacher
+                        </button>
+                    </div>
+                </div>
+                <div class="data-table active">
+                    <div class="table-header">
+                        <h3>Teachers <span id="teacherCount"
+                                style="font-size:14px;color:#64748b;font-weight:400"></span></h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Department</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="teacherTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="table-header" style="justify-content:flex-end; gap:10px; padding-top:10px;">
+                        <button id="teacherPrevBtn" class="tt-action-btn" onclick="changeTeacherPage(-1)">Prev</button>
+                        <span id="teacherPageInfo" style="font-size:13px;color:#64748b;">Page 0 of 0</span>
+                        <button id="teacherNextBtn" class="tt-action-btn" onclick="changeTeacherPage(1)">Next</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="masterdata-section" style="display:none">
+                <div class="tt-tab-bar">
+                    <button class="tt-tab active" id="md-tab-dept" onclick="switchMdTab('dept')"><i class="fas fa-building"></i> Departments</button>
+                    <button class="tt-tab" id="md-tab-class" onclick="switchMdTab('class')"><i class="fas fa-school"></i> Classes</button>
+                    <button class="tt-tab" id="md-tab-div" onclick="switchMdTab('div')"><i class="fas fa-folder-open"></i> Divisions</button>
+                    <button class="tt-tab" id="md-tab-sub" onclick="switchMdTab('sub')"><i class="fas fa-book"></i> Subjects</button>
+                    <button class="tt-tab" id="md-tab-map" onclick="switchMdTab('map')"><i class="fas fa-link"></i> Mapping</button>
+                </div>
+
+                <div id="md-panel-dept" class="tt-panel">
+                    <div class="table-header" style="margin-bottom:20px">
+                        <h3>Departments</h3>
+                        <button class="add-btn" onclick="openMdModal('dept')"><i class="fas fa-plus"></i> Add
+                            Department</button>
+                    </div>
+                    <div class="data-table active" style="padding:0; box-shadow:none;">
+                        <table id="mdDeptTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mdDeptBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="md-panel-class" class="tt-panel" style="display:none">
+                    <div class="table-header" style="margin-bottom:20px">
+                        <h3>Classes</h3>
+                        <button class="add-btn" onclick="openMdModal('class')"><i class="fas fa-plus"></i> Add
+                            Class</button>
+                    </div>
+                    <div class="data-table active" style="padding:0; box-shadow:none;">
+                        <table id="mdClassTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Department</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mdClassBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="md-panel-div" class="tt-panel" style="display:none">
+                    <div class="table-header" style="margin-bottom:20px">
+                        <h3>Divisions</h3>
+                        <button class="add-btn" onclick="openMdModal('div')"><i class="fas fa-plus"></i> Add
+                            Division</button>
+                    </div>
+                    <div class="data-table active" style="padding:0; box-shadow:none;">
+                        <table id="mdDivTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Class ID</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mdDivBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="md-panel-sub" class="tt-panel" style="display:none">
+                    <div class="table-header" style="margin-bottom:20px">
+                        <h3>Subjects</h3>
+                        <button class="add-btn" onclick="openMdModal('sub')"><i class="fas fa-plus"></i> Add
+                            Subject</button>
+                    </div>
+                    <div class="data-table active" style="padding:0; box-shadow:none;">
+                        <table id="mdSubTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Department</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mdSubBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="md-panel-map" class="tt-panel" style="display:none">
+                    <div class="table-header" style="margin-bottom:20px">
+                        <h3>Class-Subject Mapping</h3>
+                        <button class="add-btn" onclick="openMdModal('map')"><i class="fas fa-plus"></i> Add
+                            Mapping</button>
+                    </div>
+                    <div class="data-table active" style="padding:0; box-shadow:none;">
+                        <table id="mdMapTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Class ID</th>
+                                    <th>Subject ID</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mdMapBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== REPORTS SECTION ===== -->
+            <div id="reports-section" style="display:none">
+                <div class="section-filter-bar">
+                    <div class="filter-group">
+                        <label>Department</label>
+                        <select id="reportDeptFilter" onchange="onReportDeptChange()">
+                            <option value="">Select Department</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Class</label>
+                        <select id="reportClassFilter" onchange="onReportClassChange()">
+                            <option value="">Select Class</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Division</label>
+                        <select id="reportDivFilter">
+                            <option value="">Select Division</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Month</label>
+                        <select id="reportMonth">
+                            <option value="1">January</option>
+                            <option value="2">February</option>
+                            <option value="3">March</option>
+                            <option value="4">April</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">August</option>
+                            <option value="9">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Year</label>
+                        <input type="number" id="reportYear" value="2024">
+                    </div>
+                    <div class="filter-group" style="align-self: center; display: flex; gap: 8px;">
+                        <button class="btn-primary" onclick="generateReport()">
+                            <i class="fas fa-sync"></i> Generate
+                        </button>
+                        <button class="btn-primary" id="exportBtn" onclick="exportToCSV()" style="background: var(--success); display:none;">
+                            <i class="fas fa-file-export"></i> Export CSV
+                        </button>
+                    </div>
+                </div>
+
+                <div class="data-table active">
+                    <div class="table-header">
+                        <h3>Monthly Attendance Grid</h3>
+                    </div>
+                    <div class="table-responsive" id="reportTableWrapper">
+                        <p style="color:#64748b;text-align:center;padding:40px">Select filters and click "Generate" to
+                            view report.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notices Section -->
+            <div id="notices-section" style="display:none">
+                <div class="notice-posting-card">
+                    <div class="section-header">
+                        <h3><i class="fas fa-edit"></i> Create New Notice</h3>
+                        <p>Post announcements for students and teachers</p>
+                    </div>
+                    <form id="noticeForm" onsubmit="postNotice(event)" enctype="multipart/form-data">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="noticeTitle">Notice Title</label>
+                                <input type="text" id="noticeTitle" name="title" placeholder="e.g., Annual Sports Meet 2024" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="noticeFile">Attachment (Optional)</label>
+                                <div class="file-upload-wrapper">
+                                    <input type="file" id="noticeFile" name="noticeFile" class="file-input">
+                                    <div class="file-custom-ui">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <span>Click to upload PDF or Image</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="noticeContent">Notice Content</label>
+                            <textarea id="noticeContent" name="content" rows="4" placeholder="Enter full details of the notice here..." required></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-paper-plane"></i> Publish Notice
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="data-table active" style="margin-top: 30px;">
+                    <div class="table-header">
+                        <h3><i class="fas fa-history"></i> Manage Active Notices</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Notice Details</th>
+                                    <th>Attachment</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="noticesTableBody">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="settings-section" style="display:none">
+                <div class="notice-posting-card">
+                    <div class="section-header">
+                        <h3><i class="fas fa-cogs"></i> System Settings</h3>
+                        <p>Configure your organization profile and global system rules</p>
+                    </div>
+                    <form id="settingsForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Organization Name</label>
+                                <input type="text" id="settingOrgName" value="RC Shahu Education Society">
+                            </div>
+                            <div class="form-group">
+                                <label>Organization Code</label>
+                                <input type="text" id="settingOrgCode" value="RCS-EDU" readonly style="background:#e2e8f0; cursor:not-allowed">
+                            </div>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>QR Code Expiry (Seconds)</label>
+                                <input type="number" id="settingQrExpiry" value="60">
+                            </div>
+                            <div class="form-group">
+                                <label>Daily Attendance Deadline</label>
+                                <input type="time" id="settingAttendanceDeadline" value="09:30">
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn-primary" onclick="alert('Settings Saved Successfully!')">
+                                <i class="fas fa-save"></i> Save Configuration
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- ===== TIMETABLE SECTION ===== -->
+            <div id="timetable-section" style="display:none">
+
+                <!-- Sub-tab bar -->
+                <div class="tt-tab-bar">
+                    <button class="tt-tab active" id="tt-tab-slots" onclick="switchTimetableTab('slots')"><i class="fas fa-list-ol"></i> Period Slots</button>
+                    <button class="tt-tab" id="tt-tab-grid" onclick="switchTimetableTab('grid')"><i class="fas fa-calendar-alt"></i> Teacher Timetable</button>
+                </div>
+
+                <!-- Period Slots Sub-tab -->
+                <div id="tt-panel-slots" class="tt-panel">
+                    <div class="table-header" style="margin-bottom:20px">
+                        <h3>Daily Period Slots</h3>
+                        <button class="add-btn" onclick="openSlotModal()"><i class="fas fa-plus"></i> Add Slot</button>
+                    </div>
+                    <div class="data-table active" style="padding:0">
+                        <div class="table-responsive">
+                            <table id="slotsTable">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Label</th>
+                                        <th>Type</th>
+                                        <th>Start Time</th>
+                                        <th>End Time</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="slotsTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Teacher Timetable Sub-tab -->
+                <div id="tt-panel-grid" class="tt-panel" style="display:none">
+                    <div class="table-header" style="margin-bottom:20px">
+                        <h3>Teacher Weekly Timetable</h3>
+                        <div class="tt-teacher-select">
+                            <label for="ttTeacherSelect">Select Teacher:</label>
+                            <select id="ttTeacherSelect" onchange="loadTeacherTimetableGrid(this.value)">
+                                <option value="">-- Choose Teacher --</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="ttGridWrapper">
+                        <p style="color:#64748b;text-align:center;padding:40px">Select a teacher to view their timetable
+                            grid.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SLOT ADD/EDIT MODAL ===== -->
+    <div id="slotModal" class="modal">
+        <div class="modal-content modal-md">
+            <div class="modal-header">
+                <h3 id="slotModalTitle">Add Period Slot</h3>
+                <button class="close-btn" onclick="closeSlotModal()">&times;</button>
+            </div>
+            <form id="slotForm" onsubmit="saveSlot(event)">
+                <input type="hidden" id="slotId">
+                <div class="form-group">
+                    <label>Slot Order (position in day)</label>
+                    <input type="number" id="slotOrder" min="1" required placeholder="e.g. 1">
+                </div>
+                <div class="form-group">
+                    <label>Label</label>
+                    <input type="text" id="slotLabel" required placeholder="e.g. Period 1, Lunch Break">
+                </div>
+                <div class="form-group">
+                    <label>Type</label>
+                    <select id="slotType" required>
+                        <option value="LECTURE">LECTURE</option>
+                        <option value="BREAK">BREAK</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Start Time</label>
+                    <input type="time" id="slotStart" required>
+                </div>
+                <div class="form-group">
+                    <label>End Time</label>
+                    <input type="time" id="slotEnd" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeSlotModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Slot</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== CELL EDIT MODAL ===== -->
+    <div id="cellModal" class="modal">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h3 id="cellModalTitle">Edit Class</h3>
+                <button class="close-btn" onclick="closeCellModal()">&times;</button>
+            </div>
+            <form id="cellForm" onsubmit="saveCellData(event)">
+                <input type="hidden" id="cellTeacherId">
+                <input type="hidden" id="cellSlotId">
+                <input type="hidden" id="cellDay">
+                <div class="form-group">
+                    <label>Class Name</label>
+                    <input type="text" id="cellClassName" placeholder="e.g. MCA I">
+                </div>
+                <div class="form-group">
+                    <label>Division</label>
+                    <input type="text" id="cellDivision" placeholder="e.g. A">
+                </div>
+                <div class="form-group">
+                    <label>Subject</label>
+                    <input type="text" id="cellSubject" placeholder="e.g. Java Programming">
+                </div>
+                <div class="form-group">
+                    <label>Room No</label>
+                    <input type="text" id="cellRoomNo" placeholder="e.g. 201">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeCellModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Modal -->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add New</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="addForm">
+                <div class="form-group"><label>Full Name</label><input type="text" id="fullName" required></div>
+                <div class="form-group"><label>Email</label><input type="email" id="email" required></div>
+                <div class="form-group"><label>Phone</label><input type="tel" id="phone" required></div>
+
+                <div class="form-group" id="classField" style="display:none"><label>Class</label>
+                    <select id="class">
+                        <option>MCA I</option>
+                        <option>MCA II</option>
+                        <option>MBA I</option>
+                        <option>MBA II</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Master Data Add Modal -->
+    <div id="mdModal" class="modal">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h3 id="mdModalTitle">Add Data</h3>
+                <button class="close-btn"
+                    onclick="document.getElementById('mdModal').style.display='none'">&times;</button>
+            </div>
+            <form id="mdForm" onsubmit="saveMasterData(event)">
+                <input type="hidden" id="mdType">
+                <div class="form-group" id="mdNameGroup">
+                    <label id="mdNameLabel">Name</label>
+                    <input type="text" id="mdName">
+                </div>
+                <div class="form-group" id="mdDeptMapGroup" style="display:none">
+                    <label>Department (Optional)</label>
+                    <select id="mdDeptSelect">
+                        <option value="">-- None --</option>
+                    </select>
+                </div>
+                <div class="form-group" id="mdClassMapGroup" style="display:none">
+                    <label>Class</label>
+                    <select id="mdClassSelect" required></select>
+                </div>
+                <div class="form-group" id="mdSubMapGroup" style="display:none">
+                    <label>Subject</label>
+                    <select id="mdSubSelect" required></select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary"
+                        onclick="document.getElementById('mdModal').style.display='none'">Cancel</button>
+                    <button type="submit" class="btn-primary">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/admin-dashboard.js"></script>
+</body>
+
+</html>

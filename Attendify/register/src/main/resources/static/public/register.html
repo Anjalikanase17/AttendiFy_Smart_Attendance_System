@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendify · Student Registration</title>
+    <!-- same font as login for consistency -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../css/register.css">
+
+</head>
+
+<body>
+    <!-- floating background blobs (matching login) -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <div class="register-card">
+        <div class="register-header">
+            <div class="brand-icon">📝</div>
+            <div>
+                <h2>Student registration</h2>
+                <p>join Attendify — all fields required</p>
+            </div>
+        </div>
+
+        <!-- YOUR EXACT FORM (IDs unchanged) -->
+        <form id="registerForm">
+            <div class="form-grid">
+                <!-- Full name (full width) -->
+                <div class="input-group full-width">
+                    <label>Full name</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">👤</span>
+                        <input type="text" id="name" placeholder="e.g. Alex Johnson" required>
+                    </div>
+                </div>
+
+                <!-- Roll number -->
+                <div class="input-group">
+                    <label>Roll number</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🔢</span>
+                        <input type="text" id="rollNo" placeholder="e.g. 221EC001" required>
+                    </div>
+                </div>
+
+
+                <!-- Mobile number -->
+                <div class="input-group">
+                    <label>Mobile number</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">📱</span>
+                        <input type="tel" id="mobilenumber" placeholder="+91 98765 43210" required>
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="input-group">
+                    <label>Email address</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">✉️</span>
+                        <input type="email" id="email" placeholder="student@institute.edu" required>
+                    </div>
+                </div>
+
+                <!-- Address (full width) -->
+                <div class="input-group full-width">
+                    <label>Address</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🏠</span>
+                        <input type="text" id="address" placeholder="House / street / city" required>
+                    </div>
+                </div>
+
+                <!-- School Code (full width) -->
+                <div class="input-group full-width">
+                    <label>School Code</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🏫</span>
+                        <input type="text" id="schoolCode" placeholder="6-digit organization code" required>
+                    </div>
+                </div>
+
+                <!-- Password (full width) -->
+                <div class="input-group full-width">
+                    <label>Password</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🔑</span>
+                        <input type="password" id="password" placeholder="·············" required>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="register-btn">
+                <span>→</span> Create account
+            </button>
+
+            <!-- message element (exactly as referenced in JS) -->
+            <div id="message" class="message"></div>
+
+            <div class="login-prompt">
+                Already have an account?
+                <span onclick="window.location.href='login.html'">sign in</span>
+            </div>
+        </form>
+    </div>
+    <script src="../js/register.js"></script>
+    <style>
+        /* ensure message becomes visible when content added */
+        #message:not(:empty) {
+            display: flex;
+        }
+    </style>
+</body>
+
+</html>

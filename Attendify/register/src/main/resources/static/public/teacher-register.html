@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Registration</title>
+    <link rel="stylesheet" href="../css/teacher-register.css">
+</head>
+
+<body>
+    <!-- Floating blobs (from your CSS) -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <div class="register-card">
+        <div class="register-header">
+            <div class="brand-icon">👨‍🏫</div>
+            <div>
+                <h2>Teacher Registration</h2>
+                <p>join as educator — all fields required</p>
+            </div>
+        </div>
+
+        <form id="registerForm">
+            <div class="form-grid">
+                <!-- Full Name (full width) -->
+                <div class="input-group full-width">
+                    <label>Full name</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">👤</span>
+                        <input type="text" id="name" placeholder="e.g. John Doe" required>
+                    </div>
+                </div>
+
+
+                <!-- Mobile number -->
+                <div class="input-group">
+                    <label>Mobile number</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">📱</span>
+                        <input type="tel" id="mobilenumber" placeholder="+91 98765 43210" required>
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="input-group">
+                    <label>Email address</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">✉️</span>
+                        <input type="email" id="email" placeholder="teacher@institute.edu" required>
+                    </div>
+                </div>
+
+                <!-- School Code (full width) -->
+                <div class="input-group full-width">
+                    <label>School Code</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🏫</span>
+                        <input type="text" id="schoolCode" placeholder="6-digit organization code" required>
+                    </div>
+                </div>
+
+                <!-- Password (full width) -->
+                <div class="input-group full-width">
+                    <label>Password</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🔑</span>
+                        <input type="password" id="password" placeholder="·············" required>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="register-btn">
+                <span>→</span> Create account
+            </button>
+
+            <div id="message" class="message"></div>
+
+            <div class="login-prompt">
+                Already have an account?
+                <span onclick="window.location.href='login.html'">sign in</span>
+            </div>
+        </form>
+    </div>
+
+    <script src="../js/teacher-regi.js"></script>
+</body>
+
+</html>
