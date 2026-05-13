@@ -2,7 +2,6 @@ package com.example.attendance_Backend.controller;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,88 +58,101 @@ public class AttendanceController {
 
     // 1️⃣ STUDENT MARKS ATTENDANCE
     @PostMapping("/mark")
-    public Map<String, String> markAttendance(
-            @RequestParam String rollNo,
-            @RequestParam String deviceId,
-            @RequestParam double latitude,
-            @RequestParam double longitude,
-            @RequestParam String sessionId) {
-        Map<String, String> response = new HashMap<>();
+public ResponseEntity<Map<String, String>> markAttendance(
+        @RequestParam String rollNo,
+        @RequestParam String deviceId,
+        @RequestParam double latitude,
+        @RequestParam double longitude,
+        @RequestParam String sessionId) {
+
+    Map<String, String> response = new HashMap<>();
+
+    try {
+        System.out.println("🔥 Request received from device: " + deviceId);
 
         if (sessionId == null || sessionId.isEmpty()) {
             response.put("message", "Session ID required ❌");
-            return response;
+            return ResponseEntity.badRequest().body(response);
         }
 
         AttendanceSession session = sessionRepository.findById(sessionId).orElse(null);
+
         if (session == null) {
             response.put("message", "Invalid QR session ❌");
-            return response;
+            return ResponseEntity.ok(response);
         }
 
         Admin admin = session.getAdmin();
         if (admin == null) {
-            response.put("message", "Session not associated with any admin ❌");
-            return response;
+            response.put("message", "Session not linked ❌");
+            return ResponseEntity.ok(response);
         }
+
         Long adminId = admin.getId();
 
         User user = userRepository.findByRollNoAndAdminId(rollNo, adminId).orElse(null);
+
         if (user == null) {
-            response.put("message", "Invalid Roll Number for this organization");
-            return response;
+            response.put("message", "Invalid Roll Number ❌");
+            return ResponseEntity.ok(response);
         }
 
-        // ⏳ check expiry
+        // Expiry check
         if (session.getExpiryTime().isBefore(LocalDateTime.now())) {
             response.put("message", "QR expired ❌");
-            return response;
-        }
-        // geofence check
-        double teacherLat = session.getTeacherLat();
-        double teacherLng = session.getTeacherLng();
-        double distance = calculateDistance(teacherLat, teacherLng, latitude, longitude);
-        if (distance > session.getRadiusKm()) { // default 0.1 km
-            response.put("message", "You are outside classroom range ❌");
-            return response;
-        }
-        LocalDate today = LocalDate.now();
-        // ✅ Check if there's a pre-generated row (or existing row)
-        Attendance attendance = attendanceRepository
-                .findByUser_IdAndSessionIdAndAdminId(user.getId(), sessionId, adminId).orElse(null);
-
-        if (attendance != null && "Present".equalsIgnoreCase(attendance.getStatus())) {
-            response.put("message", "Attendance already marked for this session");
-            return response;
+            return ResponseEntity.ok(response);
         }
 
-        // 🔒 Block same device for THIS specific session (proxy prevention)
-        boolean deviceUsed = attendanceRepository.existsByDeviceIdAndSessionIdAndAdminId(deviceId, sessionId, adminId);
+        // Distance check
+        double distance = calculateDistance(
+                session.getTeacherLat(),
+                session.getTeacherLng(),
+                latitude,
+                longitude
+        );
+
+        if (distance > session.getRadiusKm()) {
+            response.put("message", "Outside classroom range ❌");
+            return ResponseEntity.ok(response);
+        }
+
+        // Device check
+        boolean deviceUsed = attendanceRepository
+                .existsByDeviceIdAndSessionIdAndAdminId(deviceId, sessionId, adminId);
+
         if (deviceUsed) {
-            response.put("message", "Attendance already marked from this device ❌");
-            return response;
+            response.put("message", "Device already used ❌");
+            return ResponseEntity.ok(response);
         }
 
-        if (attendance == null) {
-            // Unmapped student scanning the QR code
-            attendance = new Attendance();
-            attendance.setUser(user);
-            attendance.setSubjectMaster(session.getSubjectMaster());
-            attendance.setDate(today);
-            attendance.setSessionId(sessionId);
-            attendance.setAdmin(admin);
-            attendance.setClassMaster(session.getClassMaster());
-            attendance.setDivisionMaster(session.getDivisionMaster());
-        }
+        Attendance attendance = attendanceRepository
+                .findByUser_IdAndSessionIdAndAdminId(user.getId(), sessionId, adminId)
+                .orElse(new Attendance());
 
+        attendance.setUser(user);
+        attendance.setSessionId(sessionId);
+        attendance.setAdmin(admin);
         attendance.setStatus("Present");
         attendance.setDeviceId(deviceId);
+        attendance.setDate(LocalDate.now());
+        attendance.setClassMaster(user.getClassMaster());
+        attendance.setDivisionMaster(user.getDivisionMaster());
+        attendance.setSubjectMaster(session.getSubjectMaster());
 
         attendanceRepository.save(attendance);
-        response.put("message", "Attendance marked successfully ✅");
-        return response;
-    }
 
+        response.put("message", "Attendance marked successfully ✅");
+
+        System.out.println("✅ Attendance saved for: " + rollNo);
+
+        return ResponseEntity.ok(response);
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        response.put("message", "Server error ❌");
+        return ResponseEntity.status(500).body(response);
+    }
+}
     // helper for geofence
     private double calculateDistance(double lat1, double lon1,
             double lat2, double lon2) {

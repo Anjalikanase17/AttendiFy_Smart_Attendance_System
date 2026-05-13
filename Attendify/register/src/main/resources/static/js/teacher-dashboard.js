@@ -480,8 +480,10 @@ function generateQRCode(className, division, duration, sessionId) {
     const qrImage = document.getElementById('qrImage');
     const qrTimer = document.getElementById('qrTimer');
 
+    document.getElementById('qrDisplay').style.display = 'block';
+
     // Base URL for students (dynamic based on current host)
-    const base = `${window.location.origin}/public/student-attendance.html`;
+    const base = `https://kia-unogled-lionheartedly.ngrok-free.dev/public/student-attendance.html`;
 
     const qrParams = new URLSearchParams();
     qrParams.append("class", className);
@@ -501,6 +503,7 @@ function generateQRCode(className, division, duration, sessionId) {
     // Add share buttons if not already present
     addShareButtons();
 }
+
 // Start countdown timer
 function startCountdown(seconds, timerElement) {
     let timeLeft = seconds;
